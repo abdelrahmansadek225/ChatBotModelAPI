@@ -166,8 +166,6 @@ namespace ChatBotModelAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserMessage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BotResponse = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -251,9 +249,9 @@ namespace ChatBotModelAPI.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "047a1246-74d6-4cf4-915d-6e2df7580b69", null, "User", "USER" },
-                    { "69e65aa6-50bd-4cff-b740-dd71470627b8", null, "SuperAdmin", "SUPERADMIN" },
-                    { "c401ac8c-ae2c-48be-8eee-e3c6db6776de", null, "Admin", "ADMIN" }
+                    { "23dfb12b-28b0-4de4-acdc-a51c6897e679", null, "Admin", "ADMIN" },
+                    { "65a9faf4-b5a3-40e5-b855-48e7852e8eaa", null, "User", "USER" },
+                    { "8fe307ca-c439-4bb7-b47b-810fdd2ce6a6", null, "SuperAdmin", "SUPERADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

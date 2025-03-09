@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace ChatBotModelAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     [Authorize] // 🔹 Ensure all actions require authentication
     public class MessageController : ControllerBase

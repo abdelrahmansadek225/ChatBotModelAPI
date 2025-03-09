@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using ChatBotModelAPI.DTOs.CharMessageDTOs;
 using ChatBotModelAPI.Models;
+using ChatBotModelAPI.Models.Roles;
+using ChatBotModelAPI.ViewModels;
 
 namespace ChatBotModelAPI.DTOs
 {
@@ -16,6 +18,10 @@ namespace ChatBotModelAPI.DTOs
 
             // Map WriteChatMessageDTO to ChatMessage
             CreateMap<WriteChatMessageDTO, ChatMessage>().ReverseMap();
+            #endregion
+
+            #region AppUser
+            CreateMap<AppUser, RegisterViewModel>().ReverseMap();
             #endregion
         }
     }

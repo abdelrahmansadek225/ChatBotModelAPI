@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using ChatBotModelAPI.DTOs.CharMessageDTOs;
 using ChatBotModelAPI.Models;
 using ChatBotModelAPI.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatBotModelAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     public class ChatMessageController : ControllerBase
     {
@@ -41,17 +40,18 @@ namespace ChatBotModelAPI.Controllers
 
         // ✅ Add a method to create a chat message
         [HttpPost]
-        public async Task<IActionResult> CreateChatMessage(WriteChatMessageDTO chatMessageDTO)
+        public async Task<IActionResult> CreateNewChat(string userId)
         {
-            if (chatMessageDTO == null)
+            var chatMessage = new ChatMessage
             {
-                return BadRequest();
-            }
+                Id = Guid.NewGuid().ToString(),
+                UserId = userId,
+                Timestamp = DateTime.UtcNow
+            };
 
-            var chatMessage = _mapper.Map<WriteChatMessageDTO, ChatMessage>(chatMessageDTO); // Map the DTO to the model
             await _unitOfWork.ChatMessageRepository.AddAsync(chatMessage);
             await _unitOfWork.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetChatMessage), new { id = chatMessage.Id }, chatMessageDTO);
+            return CreatedAtAction(nameof(GetChatMessage), new { id = chatMessage.Id }, chatMessage);
         }
 
         /// <summary>

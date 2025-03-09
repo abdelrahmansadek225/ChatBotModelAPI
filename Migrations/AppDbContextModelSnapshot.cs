@@ -63,20 +63,12 @@ namespace ChatBotModelAPI.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("BotResponse")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserMessage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -234,19 +226,19 @@ namespace ChatBotModelAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c401ac8c-ae2c-48be-8eee-e3c6db6776de",
+                            Id = "23dfb12b-28b0-4de4-acdc-a51c6897e679",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "047a1246-74d6-4cf4-915d-6e2df7580b69",
+                            Id = "65a9faf4-b5a3-40e5-b855-48e7852e8eaa",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "69e65aa6-50bd-4cff-b740-dd71470627b8",
+                            Id = "8fe307ca-c439-4bb7-b47b-810fdd2ce6a6",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
