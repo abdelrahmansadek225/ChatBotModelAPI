@@ -21,6 +21,10 @@ namespace ChatBotModelAPI.Models
         public virtual DbSet<AppUser> appUsers { get; set; }
         public virtual DbSet<ChatMessage> ChatMessages { get; set; }
 
+        public virtual DbSet<UserMessage> UserMessages { get; set; }
+
+        public virtual DbSet<BotReply> BotReplies { get; set; }
+
         #endregion
 
         override protected void OnModelCreating(ModelBuilder modelBuilder)

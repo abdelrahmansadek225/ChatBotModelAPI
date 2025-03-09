@@ -25,11 +25,43 @@ namespace ChatBotModelAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ChatBotModelAPI.Models.BotReply", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BotResponse")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChatMessageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MessageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatMessageId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BotReplies");
+                });
+
             modelBuilder.Entity("ChatBotModelAPI.Models.ChatMessage", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BotResponse")
                         .IsRequired()
@@ -51,38 +83,6 @@ namespace ChatBotModelAPI.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ChatMessages");
-                });
-
-            modelBuilder.Entity("ChatBotModelAPI.Models.Message", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ChatMessageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsEdited")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatMessageId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("ChatBotModelAPI.Models.Roles.AppUser", b =>
@@ -163,6 +163,48 @@ namespace ChatBotModelAPI.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("ChatBotModelAPI.Models.UserMessage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BotReplyId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ChatMessageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEdited")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BotReplyId")
+                        .IsUnique();
+
+                    b.HasIndex("ChatMessageId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("UserMessages");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -192,19 +234,19 @@ namespace ChatBotModelAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "42330179-b6d3-4d16-ac76-b6956e4f0cd8",
+                            Id = "c401ac8c-ae2c-48be-8eee-e3c6db6776de",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "fe1531cf-67ed-459c-8d36-e499b843a80a",
+                            Id = "047a1246-74d6-4cf4-915d-6e2df7580b69",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "8977d022-2b84-4198-912d-56bf7e9da71e",
+                            Id = "69e65aa6-50bd-4cff-b740-dd71470627b8",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
@@ -316,6 +358,25 @@ namespace ChatBotModelAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ChatBotModelAPI.Models.BotReply", b =>
+                {
+                    b.HasOne("ChatBotModelAPI.Models.ChatMessage", "Chat")
+                        .WithMany("BotReplies")
+                        .HasForeignKey("ChatMessageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ChatBotModelAPI.Models.Roles.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ChatBotModelAPI.Models.ChatMessage", b =>
                 {
                     b.HasOne("ChatBotModelAPI.Models.Roles.AppUser", "User")
@@ -327,8 +388,14 @@ namespace ChatBotModelAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ChatBotModelAPI.Models.Message", b =>
+            modelBuilder.Entity("ChatBotModelAPI.Models.UserMessage", b =>
                 {
+                    b.HasOne("ChatBotModelAPI.Models.BotReply", "BotReply")
+                        .WithOne("userNessage")
+                        .HasForeignKey("ChatBotModelAPI.Models.UserMessage", "BotReplyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ChatBotModelAPI.Models.ChatMessage", "Chat")
                         .WithMany("Messages")
                         .HasForeignKey("ChatMessageId")
@@ -340,6 +407,8 @@ namespace ChatBotModelAPI.Migrations
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("BotReply");
 
                     b.Navigation("Chat");
 
@@ -397,8 +466,16 @@ namespace ChatBotModelAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ChatBotModelAPI.Models.BotReply", b =>
+                {
+                    b.Navigation("userNessage")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ChatBotModelAPI.Models.ChatMessage", b =>
                 {
+                    b.Navigation("BotReplies");
+
                     b.Navigation("Messages");
                 });
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatBotModelAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250309093911_v2")]
-    partial class v2
+    [Migration("20250309141644_v1")]
+    partial class v1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,11 +28,43 @@ namespace ChatBotModelAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ChatBotModelAPI.Models.BotReply", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BotResponse")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChatMessageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MessageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatMessageId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BotReplies");
+                });
+
             modelBuilder.Entity("ChatBotModelAPI.Models.ChatMessage", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("BotResponse")
                         .IsRequired()
@@ -134,6 +166,48 @@ namespace ChatBotModelAPI.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("ChatBotModelAPI.Models.UserMessage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BotReplyId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ChatMessageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEdited")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BotReplyId")
+                        .IsUnique();
+
+                    b.HasIndex("ChatMessageId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("UserMessages");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -163,19 +237,19 @@ namespace ChatBotModelAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "909908dd-889e-45f6-bd27-80221f376bde",
+                            Id = "c401ac8c-ae2c-48be-8eee-e3c6db6776de",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "96641ffa-b6af-46f1-b974-3f020305b613",
+                            Id = "047a1246-74d6-4cf4-915d-6e2df7580b69",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "07c67238-a4df-41ec-84a6-2fb761c8bfbd",
+                            Id = "69e65aa6-50bd-4cff-b740-dd71470627b8",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
@@ -287,15 +361,61 @@ namespace ChatBotModelAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ChatBotModelAPI.Models.BotReply", b =>
+                {
+                    b.HasOne("ChatBotModelAPI.Models.ChatMessage", "Chat")
+                        .WithMany("BotReplies")
+                        .HasForeignKey("ChatMessageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ChatBotModelAPI.Models.Roles.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ChatBotModelAPI.Models.ChatMessage", b =>
                 {
                     b.HasOne("ChatBotModelAPI.Models.Roles.AppUser", "User")
                         .WithMany("ChatMessages")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ChatBotModelAPI.Models.UserMessage", b =>
+                {
+                    b.HasOne("ChatBotModelAPI.Models.BotReply", "BotReply")
+                        .WithOne("userNessage")
+                        .HasForeignKey("ChatBotModelAPI.Models.UserMessage", "BotReplyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ChatBotModelAPI.Models.ChatMessage", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatMessageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ChatBotModelAPI.Models.Roles.AppUser", "Sender")
+                        .WithMany("Messages")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BotReply");
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -303,7 +423,7 @@ namespace ChatBotModelAPI.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -312,7 +432,7 @@ namespace ChatBotModelAPI.Migrations
                     b.HasOne("ChatBotModelAPI.Models.Roles.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -321,7 +441,7 @@ namespace ChatBotModelAPI.Migrations
                     b.HasOne("ChatBotModelAPI.Models.Roles.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -330,13 +450,13 @@ namespace ChatBotModelAPI.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ChatBotModelAPI.Models.Roles.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -345,13 +465,28 @@ namespace ChatBotModelAPI.Migrations
                     b.HasOne("ChatBotModelAPI.Models.Roles.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ChatBotModelAPI.Models.BotReply", b =>
+                {
+                    b.Navigation("userNessage")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ChatBotModelAPI.Models.ChatMessage", b =>
+                {
+                    b.Navigation("BotReplies");
+
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("ChatBotModelAPI.Models.Roles.AppUser", b =>
                 {
                     b.Navigation("ChatMessages");
+
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

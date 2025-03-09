@@ -25,6 +25,6 @@ namespace ChatBotModelAPI.Models.Roles
         public string? ProfilePictureUrl { get; set; } = string.Empty;
 
         public virtual List<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
-        public virtual List<Message> Messages { get; set; } = new List<Message>();
+        public virtual List<UserMessage> Messages { get; set; } = new List<UserMessage>();
     }
 }

@@ -8,7 +8,7 @@ namespace ChatBotModelAPI.Repository.Interfaces
         GenericRepository<AppUser> AppUserRepository { get; }
         GenericRepository<ChatMessage> ChatMessageRepository { get; }
 
-        GenericRepository<Message> MessageRepository { get; }
+        GenericRepository<UserMessage> MessageRepository { get; }
         Task<int> SaveChangesAsync();
     }
 }

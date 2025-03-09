@@ -4,13 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatBotModelAPI.Models
 {
-    public class Message
+    public class UserMessage
     {
         [Key]
-        public Guid Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
-        public Guid ChatMessageId { get; set; } // FK to ChatMessage
+        [ForeignKey("Chat")]
+        public string ChatMessageId { get; set; } // FK to ChatMessage
 
         public virtual ChatMessage Chat { get; set; }  // Navigation Property
 
@@ -26,5 +27,12 @@ namespace ChatBotModelAPI.Models
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
 
         public bool IsEdited { get; set; } = false;
+
+        public bool IsDeleted { get; set; } = false;
+
+        [ForeignKey("BotReply")]
+        public string BotReplyId { get; set; }  // FK to BotReply
+        public virtual BotReply BotReply { get; set; }
+
     }
 }

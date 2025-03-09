@@ -6,6 +6,5 @@
         public string BotResponse { get; set; }
         public DateTime Timestamp { get; set; }
         public string UserId { get; set; }
-
     }
 }
