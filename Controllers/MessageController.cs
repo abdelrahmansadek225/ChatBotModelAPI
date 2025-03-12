@@ -24,19 +24,20 @@ namespace ChatBotModelAPI.Controllers
 
         // ✅ Send a new message (Fully RESTful)
         [HttpPost("send")]
+        [AllowAnonymous]
         public async Task<IActionResult> SendMessage([FromBody] SendMessageDTO messageDTO)
         {
             if (messageDTO == null)
                 return BadRequest("Message content is required.");
 
             // 🔹 Get user ID from JWT token (instead of IHttpContextAccessor)
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized("User is not authenticated.");
+            //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //if (string.IsNullOrEmpty(userId))
+            //    return Unauthorized("User is not authenticated.");
 
             // 🔹 Map DTO to Message entity
             var message = _mapper.Map<UserMessage>(messageDTO);
-            message.SenderId = userId;
+            //message.SenderId = userId;
             message.SentAt = DateTime.UtcNow;
 
             // 🔹 Save to DB
@@ -48,6 +49,7 @@ namespace ChatBotModelAPI.Controllers
 
         // ✅ Get all messages in a chat (Fixed method)
         [HttpGet("chat/{chatId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetMessagesByChat(string chatId)
         {
             try

@@ -30,9 +30,9 @@ namespace ChatBotModelAPI.Models
 
         public bool IsDeleted { get; set; } = false;
 
-        [ForeignKey("BotReply")]
-        public string BotReplyId { get; set; }  // FK to BotReply
-        public virtual BotReply BotReply { get; set; }
+        //[ForeignKey("BotReply")]
+        //public string BotReplyId { get; set; }  // FK to BotReply
+        //public virtual BotReply BotReply { get; set; }
 
     }
 }

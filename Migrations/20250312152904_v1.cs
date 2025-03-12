@@ -181,6 +181,35 @@ namespace ChatBotModelAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserMessages",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ChatMessageId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsEdited = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserMessages_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserMessages_ChatMessages_ChatMessageId",
+                        column: x => x.ChatMessageId,
+                        principalTable: "ChatMessages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BotReplies",
                 columns: table => new
                 {
@@ -189,6 +218,7 @@ namespace ChatBotModelAPI.Migrations
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     MessageId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    userNessageId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ChatMessageId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -206,40 +236,10 @@ namespace ChatBotModelAPI.Migrations
                         principalTable: "ChatMessages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserMessages",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ChatMessageId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsEdited = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    BotReplyId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserMessages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserMessages_AspNetUsers_SenderId",
-                        column: x => x.SenderId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserMessages_BotReplies_BotReplyId",
-                        column: x => x.BotReplyId,
-                        principalTable: "BotReplies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserMessages_ChatMessages_ChatMessageId",
-                        column: x => x.ChatMessageId,
-                        principalTable: "ChatMessages",
+                        name: "FK_BotReplies_UserMessages_userNessageId",
+                        column: x => x.userNessageId,
+                        principalTable: "UserMessages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -249,9 +249,9 @@ namespace ChatBotModelAPI.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "23dfb12b-28b0-4de4-acdc-a51c6897e679", null, "Admin", "ADMIN" },
-                    { "65a9faf4-b5a3-40e5-b855-48e7852e8eaa", null, "User", "USER" },
-                    { "8fe307ca-c439-4bb7-b47b-810fdd2ce6a6", null, "SuperAdmin", "SUPERADMIN" }
+                    { "da1e487b-ead3-4d9a-af4f-8f1c3dfed4d7", null, "SuperAdmin", "SUPERADMIN" },
+                    { "e8ba8fe0-816d-44d9-babd-0919034430d6", null, "User", "USER" },
+                    { "f2d76f8f-be1a-4619-9176-1f15ad1bb9cb", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -304,15 +304,14 @@ namespace ChatBotModelAPI.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BotReplies_userNessageId",
+                table: "BotReplies",
+                column: "userNessageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ChatMessages_UserId",
                 table: "ChatMessages",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserMessages_BotReplyId",
-                table: "UserMessages",
-                column: "BotReplyId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserMessages_ChatMessageId",
@@ -344,13 +343,13 @@ namespace ChatBotModelAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "UserMessages");
+                name: "BotReplies");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "BotReplies");
+                name: "UserMessages");
 
             migrationBuilder.DropTable(
                 name: "ChatMessages");
