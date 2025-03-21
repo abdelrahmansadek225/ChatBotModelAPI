@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ChatBotModelAPI.DTOs.CharMessageDTOs;
 using ChatBotModelAPI.Models;
 using ChatBotModelAPI.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,15 @@ namespace ChatBotModelAPI.Controllers
         public async Task<IActionResult> GetChatMessages()
         {
             var chatMessages = await _unitOfWork.ChatMessageRepository.GetAllAsync();
-            return Ok(chatMessages);
+
+            if (chatMessages == null)
+            {
+                return NotFound();
+            }
+
+            var chatMessageDTO = _mapper.Map<IEnumerable<ReadChatMessageDTO>>(chatMessages);
+
+            return Ok(chatMessageDTO);
         }
 
         // ✅ Add a method to get a chat message by id
@@ -35,7 +44,10 @@ namespace ChatBotModelAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok(chatMessage);
+
+            var chatMessageDTO = _mapper.Map<ReadChatMessageDTO>(chatMessage);
+
+            return Ok(chatMessageDTO);
         }
 
         // ✅ Add a method to create a chat message
@@ -50,7 +62,6 @@ namespace ChatBotModelAPI.Controllers
             };
 
             await _unitOfWork.ChatMessageRepository.AddAsync(chatMessage);
-            await _unitOfWork.SaveChangesAsync();
             return CreatedAtAction(nameof(GetChatMessage), new { id = chatMessage.Id }, chatMessage);
         }
 

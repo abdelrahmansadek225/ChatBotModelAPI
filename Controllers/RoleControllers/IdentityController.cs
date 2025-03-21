@@ -162,7 +162,14 @@ namespace ChatBotModelAPI.Controllers.RoleControllers
         {
             var users = await _userManager.Users.ToListAsync();
 
-            return Ok(users);
+            // Return only the necessary user details
+
+            if (users == null)
+                return NotFound();
+
+            var usersDTO = _mapper.Map<List<ReadUserDTO>>(users);
+
+            return Ok(usersDTO);
         }
 
         [HttpGet("Users/{id}")]

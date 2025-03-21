@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ChatBotModelAPI.DTOs.CharMessageDTOs;
+using ChatBotModelAPI.DTOs.IdentityDTOs;
 using ChatBotModelAPI.DTOs.MessageDTOs;
 using ChatBotModelAPI.Models;
 using ChatBotModelAPI.Models.Roles;
@@ -14,18 +15,27 @@ namespace ChatBotModelAPI.DTOs
             #region ChatMessage
 
             // Map ChatMessage to ReadChatMessageDTO
-            CreateMap<ChatMessage, ReadChatMessageDTO>()
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id));
+            //CreateMap<ChatMessage, ReadChatMessageDTO>()
+            //    .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id));
 
             CreateMap<SendMessageDTO, UserMessage>().ReverseMap();
 
 
             // Map WriteChatMessageDTO to ChatMessage
             CreateMap<WriteChatMessageDTO, ChatMessage>().ReverseMap();
+            //CreateMap<ChatMessage, ReadChatMessageDTO>().ReverseMap()
+            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ChateMessageId));
+
+            CreateMap<ChatMessage, ReadChatMessageDTO>()
+            .ForMember(dest => dest.ChateMessageId, opt => opt.MapFrom(src => src.Id));
+            //.ForMember(dest => dest.BotReplies, opt => opt.MapFrom(src => src.BotReplies.Select(br => br.).ToList()))
+            //.ForMember(dest => dest.UserMessages, opt => opt.MapFrom(src => src.Messages.Select(um => um.Content).ToList()));
+
             #endregion
 
             #region AppUser
             CreateMap<AppUser, RegisterViewModel>().ReverseMap();
+            CreateMap<AppUser, ReadUserDTO>().ReverseMap();
             #endregion
         }
     }

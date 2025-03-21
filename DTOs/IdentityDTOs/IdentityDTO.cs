@@ -31,4 +31,21 @@ namespace ChatBotModelAPI.DTOs.IdentityDTOs
         [Required, MinLength(2)]
         public string LastName { get; set; }
     }
+
+    public class ReadUserDTO
+    {
+        public string Id { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string ProfilePictureUrl { get; set; } = string.Empty;
+
+        public string UserName { get; set; }
+
+        // public List<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
+        // public List<UserMessage> Messages { get; set; } = new List<UserMessage>();
+
+        public List<string> ChatMessagesId { get; set; }
+
+    }
 }
