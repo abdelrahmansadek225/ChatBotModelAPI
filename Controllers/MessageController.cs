@@ -42,15 +42,13 @@ namespace ChatBotModelAPI.Controllers
 
             // 🔹 Save to DB
             await _unitOfWork.MessageRepository.AddAsync(message);
-            await _unitOfWork.SaveChangesAsync();
-
             return CreatedAtAction(nameof(GetMessageById), new { id = message.Id }, message);
         }
 
         // ✅ Get all messages in a chat (Fixed method)
         [HttpGet("chat/{chatId}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetMessagesByChat(string chatId)
+        public async Task<IActionResult> GetMessagesByChatId(string chatId)
         {
             try
             {
@@ -59,7 +57,10 @@ namespace ChatBotModelAPI.Controllers
                 if (!messages.Any())
                     return NotFound("No messages found for this chat.");
 
-                return Ok(messages);
+                // 🔹 Map messages to DTOs
+                var messagesDTO = _mapper.Map<IEnumerable<ReadUserMessageDTO>>(messages);
+
+                return Ok(messagesDTO);
             }
             catch (Exception)
             {
@@ -70,13 +71,17 @@ namespace ChatBotModelAPI.Controllers
 
         // ✅ Get a single message by ID
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetMessageById(string id)
         {
             var message = await _unitOfWork.MessageRepository.GetByIdAsync(id);
             if (message == null)
                 return NotFound("Message not found.");
 
-            return Ok(message);
+            // 🔹 Map message to DTO
+            var messageDTO = _mapper.Map<ReadUserMessageDTO>(message);
+
+            return Ok(messageDTO);
         }
 
         // ✅ Delete a message (Ensure only the owner can delete)

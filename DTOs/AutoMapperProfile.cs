@@ -27,19 +27,27 @@ namespace ChatBotModelAPI.DTOs
             //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ChateMessageId));
 
             CreateMap<ChatMessage, ReadChatMessageDTO>()
-            .ForMember(dest => dest.ChateMessageId, opt => opt.MapFrom(src => src.Id));
-            //.ForMember(dest => dest.BotReplies, opt => opt.MapFrom(src => src.BotReplies.Select(br => br.).ToList()))
-            //.ForMember(dest => dest.UserMessages, opt => opt.MapFrom(src => src.Messages.Select(um => um.Content).ToList()));
+            .ForMember(dest => dest.ChatMessageId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.UserMessages, opt => opt.MapFrom(src => src.Messages.Select(um => um.Content).ToList()));
 
             #endregion
 
             #region AppUser
             CreateMap<AppUser, RegisterViewModel>().ReverseMap();
-            //CreateMap<AppUser, ReadUserDTO>()
-            //    .ForMember(dest => dest.ChatMessagesId, opt => opt.MapFrom(src => src.ChatMessages));
+
             CreateMap<AppUser, ReadUserDTO>()
            .ForMember(dest => dest.ChatMessagesId,
             opt => opt.MapFrom(src => src.ChatMessages.Select(cm => cm.Id).ToList()));
+
+            #endregion
+
+            #region UserMessage
+
+            CreateMap<UserMessage, ReadUserMessageDTO>()
+            .ForMember(dest => dest.ChatMessageId, opt => opt.MapFrom(src => src.ChatMessageId))
+            .ForMember(dest => dest.SenderId, opt => opt.MapFrom(src => src.Id));
+
+
 
             #endregion
         }
