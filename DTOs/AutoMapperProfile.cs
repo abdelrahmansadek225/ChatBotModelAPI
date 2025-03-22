@@ -35,7 +35,8 @@ namespace ChatBotModelAPI.DTOs
 
             #region AppUser
             CreateMap<AppUser, RegisterViewModel>().ReverseMap();
-            CreateMap<AppUser, ReadUserDTO>().ReverseMap();
+            CreateMap<AppUser, ReadUserDTO>()
+                .ForMember(dest => dest.ChatMessagesId, opt => opt.MapFrom(src => src.ChatMessages));
             #endregion
         }
     }
