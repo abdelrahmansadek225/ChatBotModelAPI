@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ChatBotModelAPI.DTOs.BotReplyDTOs;
 using ChatBotModelAPI.DTOs.CharMessageDTOs;
 using ChatBotModelAPI.DTOs.IdentityDTOs;
 using ChatBotModelAPI.DTOs.MessageDTOs;
@@ -49,6 +50,11 @@ namespace ChatBotModelAPI.DTOs
 
 
 
+            #endregion
+
+            #region BotReply
+            CreateMap<BotReply, AddBotResponseDTO>().ReverseMap();
+            CreateMap<BotReply, ReadBotResponseDTO>().ReverseMap();
             #endregion
         }
     }
