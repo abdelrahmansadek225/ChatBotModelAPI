@@ -14,6 +14,7 @@ namespace ChatBotModelAPI.Repository
         private readonly GenericRepository<AppUser> _userRepository;
         private readonly GenericRepository<ChatMessage> _chatMessageRepository;
         private readonly GenericRepository<UserMessage> _messageRepository;
+        private readonly GenericRepository<BotReply> _botReplyRepository;
 
         #region Repositories
         // Add your repositories here, assign Geters
@@ -21,6 +22,7 @@ namespace ChatBotModelAPI.Repository
         public GenericRepository<AppUser> AppUserRepository => _userRepository ?? new GenericRepository<AppUser>(_context);
         public GenericRepository<ChatMessage> ChatMessageRepository => _chatMessageRepository ?? new GenericRepository<ChatMessage>(_context);
         public GenericRepository<UserMessage> MessageRepository => _messageRepository ?? new GenericRepository<UserMessage>(_context);
+        public GenericRepository<BotReply> BotReplyRepository => _botReplyRepository ?? new GenericRepository<BotReply>(_context);
 
 
         #region example
